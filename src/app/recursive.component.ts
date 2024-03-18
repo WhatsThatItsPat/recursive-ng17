@@ -28,14 +28,21 @@ export class RecursiveComponent {
 }
 
 
-export default [
+const routes: Routes = [
   {
     path: '',
     component: RecursiveComponent
   },
   {
     path: 'recursive',
-    loadChildren: () => import('./recursive.component'),
+    /**
+     * I had no idea we could do `loadChildren` without an `import`.
+     * https://github.com/angular/angular/issues/54898#issuecomment-2000518882
+     * 
+     * I've tried `children: routes` before, but get an error for:
+     *  > Block-scoped variable 'routes' used before its declaration.ts
+     */
+    loadChildren: () => routes,
     /**
      * My infinitely recursive routing crashes the browser because it
      * tries to preload infinite lazy routes. This tells the preload
@@ -43,4 +50,6 @@ export default [
      */
     data: { preventPreload: true },
   }
-] as Routes;
+];
+
+export default routes;
